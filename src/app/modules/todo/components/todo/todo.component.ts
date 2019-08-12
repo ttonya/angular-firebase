@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AngularFireList } from '@angular/fire/database';
+import { AngularFireObject } from '@angular/fire/database';
 
 import { TodoService } from '../../services/todo.service';
 import { TodoList } from '../../models/todo-list';
@@ -13,7 +13,9 @@ export class TodoComponent implements OnInit {
   /**
    * Todo Lists
    */
-  public todos$: AngularFireList<TodoList[]>;
+  public lists$: any;
+
+  public list$: AngularFireObject<TodoList>;
 
   constructor(private readonly todoService: TodoService) { }
 
@@ -23,18 +25,22 @@ export class TodoComponent implements OnInit {
   public list: TodoList;
 
   ngOnInit() {
-    // this.todoService.readList('1').subscribe((list) => {
-    //   this.list = list;
-    //   console.log(this.list);
-    // });
     this.getLists();
+    this.getList('first');
   }
 
   /**
    * Get all lists from the database
    */
   public getLists(): void {
-    this.todos$ = this.todoService.getAllLists();
-    console.log(this.todos$);
+   this.todoService.getAllLists().subscribe((lists) => {
+      this.lists$ = lists;
+    });
+  }
+
+  public getList(listId: string) {
+    this.list$ = this.todoService.readList(listId).subscribe((list) => {
+      this.list$ = list;
+    });
   }
 }
