@@ -24,8 +24,8 @@ export class TodoService {
    * Create TODO List
    * @param list Model
    */
-  public createList(list: TodoList) {
-    return this.db.list('lists').push(list);
+  public updateList(id: string, list: TodoList) {
+    return this.db.list('lists').set(id, list);
   }
 
   /**
@@ -34,13 +34,5 @@ export class TodoService {
    */
   public readList(id: string): any {
    return this.db.object(`/lists/${id}`).valueChanges();
-  }
-
-  /**
-   * Update TODO List
-   * @param id List id
-   */
-  public updateList(id: string, key: string, value: string) {
-    return this.db.list(`/list/${id}`).update(key, value);
   }
 }

@@ -1,24 +1,27 @@
 /**
  * Todo List Model
  */
-export interface TodoList {
+export class TodoList {
+
     /**
      * Name of a list
      */
-    name: string;
-
-    /**
-     * List id
-     */
-    id: string;
-
-    /**
-     * Time last changes were made
-     */
-    changed: Date;
+    public name: string;
 
     /**
      * List of todo items
      */
-    todos: string[];
+    public todos: string[];
+
+    /**
+     * Time last changes were made
+     */
+    public changed?: Date;
+
+    constructor(name: string, todos: string[], changed?: Date
+      ) {
+        this.name = name;
+        this.todos = todos;
+        this.changed = changed;
+      }
 }
