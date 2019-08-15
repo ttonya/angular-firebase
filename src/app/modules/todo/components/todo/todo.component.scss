@@ -1,0 +1,65 @@
+:host {
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+.form {
+    display: flex;
+    justify-content: flex-start;
+    flex-direction: column;
+    width: 400px;
+    border: 1px solid silver;
+    border-radius: 10px;
+    padding: 20px;
+
+    &__group {
+        padding: 10px 0;
+        display: flex;
+        justify-content: flex-start;
+        flex-direction: column;
+    }
+
+    &__input {
+        padding: 10px 15px;
+        margin: 10px 0;
+        border-radius: 5px;
+        border: 1px solid silver;
+    }
+
+    &__block {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    &__footer {
+        text-align: left;
+    }
+}
+
+.button {
+    border-radius: 5px;
+    border: transparent;
+    cursor: pointer;
+
+    &:hover {
+        opacity: 0.8;
+    }
+
+    &--add {
+        width: 35px;
+        height: 35px;
+        font-size: 30px;
+        background-color: #5ad67b;
+        color: white;
+    }
+
+    &--save {
+        padding: 10px 25px;
+        background-color: #5a8ed6;
+        color: white;
+    }
+}
+
+:host::ng-deep .ui-dialog .ui-dialog-footer {
+    display: flex;
+}

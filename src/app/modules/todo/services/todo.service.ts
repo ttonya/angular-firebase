@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { AngularFireDatabase, AngularFireList, AngularFireObject } from '@angular/fire/database';
+import { AngularFireDatabase } from '@angular/fire/database';
 import { TodoList } from '../models/todo-list';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { Observable } from 'rxjs';
+import { take } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -35,4 +35,12 @@ export class TodoService {
   public readList(id: string): any {
    return this.db.object(`/lists/${id}`).valueChanges();
   }
+
+  /**
+   * Read TODO List
+   * @param id List id
+   */
+  public getList(id: string): any {
+   return this.afs.collection(`/lists/${id}`).valueChanges().pipe(take(1));
+   }
 }

@@ -4,10 +4,12 @@ import { AngularFireModule } from '@angular/fire';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { AngularFireDatabaseModule } from '@angular/fire/database';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 import { TodoComponent } from './components/todo/todo.component';
 import { environment } from '../../../environments/environment';
 import { TodoRoutingModule } from './todo-routing.module';
+import { ConfirmationService } from 'primeng/api';
 
 
 @NgModule({
@@ -16,11 +18,13 @@ import { TodoRoutingModule } from './todo-routing.module';
     CommonModule,
     TodoRoutingModule,
     FormsModule,
+    ConfirmDialogModule,
     ReactiveFormsModule,
     AngularFireDatabaseModule,
     AngularFireModule.initializeApp(environment.firebase),
     AngularFirestoreModule
   ],
+  providers: [ConfirmationService],
   exports: [TodoComponent]
 })
 export class TodoModule { }

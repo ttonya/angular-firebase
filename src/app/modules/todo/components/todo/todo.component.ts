@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, OnInit, Input } from '@angular/core';
-import { AngularFireObject } from '@angular/fire/database';
 import { FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { ConfirmationService } from 'primeng/api';
 
 import { TodoService } from '../../services/todo.service';
 import { TodoList } from '../../models/todo-list';
@@ -28,17 +28,20 @@ export class TodoComponent implements OnInit {
 
   public startedChanging: Date;
 
+  public isChanged: boolean;
+
   constructor(
     private readonly todoService: TodoService,
     private readonly route: ActivatedRoute,
+    public confirmationService: ConfirmationService,
     private readonly cdr: ChangeDetectorRef
     ) {
     this.id = this.route.snapshot.params.id;
+    this.list = new TodoList('New Todo List', ['todo 1', 'todo 2', 'todo 3'], String(new Date().getTime()));
    }
 
   ngOnInit() {
-    this.startedChanging = new Date();
-    this.list = new TodoList('', [], this.startedChanging);
+    this.todoService.updateList(this.id, this.list);
     this.getList();
   }
 
@@ -53,26 +56,43 @@ export class TodoComponent implements OnInit {
 
   public getList() {
     this.todoService.readList(this.id).subscribe((list) => {
-      this.list = list ? list : new TodoList('', [], this.startedChanging);
-      // this.cdr.detectChanges();
+      if (list) {
+        this.isChanged = this.list.changed <= list.changed;
+        this.list = list;
+      }
   });
   }
 
-  public addTodo(): void {
+  public addTodo(event: Event): void {
+    event.preventDefault();
     this.list.todos.push('');
   }
 
 
 
 public save(): void {
- if (this.list.changed < this.startedChanging ) {
-  this.list.changed = new Date();
-  this.todoService.updateList(this.id, this.list);
-  console.log('success');
- } else {
-   console.log('error');
- }
+  if (this.isChanged) {
+    this.confirmSave();
+  } else {
+    this.list.changed = String(new Date().getTime());
+    this.todoService.updateList(this.id, this.list);
+  }
 
+}
+
+public confirmSave() {
+  this.confirmationService.confirm({
+      message: 'There were changes made to this list in another session. Whould you like to save it anyway?',
+      acceptLabel: 'Yes, overwrite previous changes',
+      rejectLabel: 'No, get the current value from the server',
+      accept: () => {
+        this.list.changed = String(new Date().getTime());
+        this.todoService.updateList(this.id, this.list);
+      },
+      reject: () => {
+        this.getList();
+      }
+  });
 }
 
 /**
@@ -83,4 +103,5 @@ public save(): void {
   public track(index: number): number {
     return index;
   }
+
 }

@@ -1,20 +1,23 @@
-todo works
-    <form (ngSubmit)="save()">
-        <div class="form-wrapper">
-            <div class="form__group">
-                <label class="form__label">List Name</label>
-                <input class="p-col" [(ngModel)]="list.name" name="name"/>
-            </div>
-            <div class="form__group">
-                <label class="form__label">List Todos</label>
-                <button (click)="addTodo()">Add Todo</button>
-                <div *ngFor="let todo of list.todos; let i = index; trackBy:track" >
-                    <input class="p-col" [(ngModel)]="list.todos[i]" type="text" name="todo-{{i}}"/>
-                </div>
-            </div>
-            <footer class="dialog__footer">
-                <button type="submit">Save</button>
-            </footer>
+<form (ngSubmit)="save()">
+    <div class="form">
+        <div class="form__group">
+            <label class="form__label">List Name</label>
+            <input class="form__input" [(ngModel)]="list.name" name="name"/>
         </div>
-    </form>
+        <div class="form__group">
+            <div class="form__block">
+                <label class="form__label">List Todos</label>
+                <button class="button button--add" title="Add Todo" (click)="addTodo($event)">+</button>
+            </div>
+            <div *ngFor="let todo of list.todos; let i = index; trackBy:track" >
+                <input class="form__input" [(ngModel)]="list.todos[i]" type="text" name="todo-{{i}}"/>
+            </div>
+        </div>
+        <footer class="form__footer">
+            <button class="button button--save" type="submit">Save</button>
+        </footer>
+    </div>
+</form>
 
+<p-confirmDialog header="Confirmation" 
+icon="pi pi-exclamation-triangle"></p-confirmDialog>

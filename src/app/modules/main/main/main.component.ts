@@ -17,7 +17,7 @@ export class MainComponent implements OnInit {
   }
 
   ngOnInit() {
-    if (this.location.path() === '/todo') {
+    if (this.location.path() === '/todo' || this.location.path() === '') {
       this.router.navigate(['/todo', this.generateId()]);
     }
   }
