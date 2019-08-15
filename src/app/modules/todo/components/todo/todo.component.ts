@@ -43,16 +43,22 @@ export class TodoComponent implements OnInit {
    */
   public isChanged: boolean;
 
+  public isNew: boolean;
+
   constructor(
     private readonly todoService: TodoService,
     private readonly route: ActivatedRoute,
     public confirmationService: ConfirmationService
     ) {
+    this.list = new TodoList('New Todo List', ['todo 1', 'todo 2', 'todo 3'], new Date().getTime());
     this.id = this.route.snapshot.params.id;
     this.todoService.readList(this.id).subscribe((list) => {
-      this.isChanged = this.startedChanging ? this.startedChanging <= list.changed : false;
+      if (list) {
+        this.isNew = !list;
+        this.isChanged = this.startedChanging ? this.startedChanging <= list.changed : false;
+      }
     });
-    this.list = new TodoList('New Todo List', ['todo 1', 'todo 2', 'todo 3'], new Date().getTime());
+
    }
 
   public ngOnInit(): void {
@@ -74,7 +80,9 @@ export class TodoComponent implements OnInit {
   public readList(): void {
     this.startedChanging = new Date().getTime();
     this.todoService.getList(this.id).subscribe((list) => {
-      this.list = list;
+      if (list) {
+        this.list = list;
+      }
     });
   }
 
