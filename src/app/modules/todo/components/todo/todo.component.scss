@@ -32,7 +32,10 @@
     }
 
     &__footer {
-        text-align: left;
+        width: 200px;
+        display: flex;
+        justify-content: space-between;
+    
     }
 }
 
@@ -57,6 +60,26 @@
         padding: 10px 25px;
         background-color: #5a8ed6;
         color: white;
+    }
+
+    &--edit {
+        padding: 10px 25px;
+        background-color: white;
+        color: #5a8ed6;
+        border: 1px solid #5a8ed6;
+    }
+
+    &--delete {
+        margin-left: 10px;
+    }
+
+    &--disabled {
+        background-color: grey;
+        cursor: default;
+
+        &:hover {
+            opacity: 1 !important;
+        }
     }
 }
 

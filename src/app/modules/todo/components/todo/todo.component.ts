@@ -44,10 +44,15 @@ export class TodoComponent implements OnInit {
   public isChanged: boolean;
 
   /**
-   * Is it new list
+   * Is it a new list
    * or list already exists
    */
   public isNew: boolean;
+
+  /**
+   * Editable fields or not
+   */
+  public isEditable: boolean;
 
   constructor(
     private readonly todoService: TodoService,
@@ -56,10 +61,12 @@ export class TodoComponent implements OnInit {
     ) {
     this.list = new TodoList('New Todo List', ['todo 1', 'todo 2', 'todo 3'], new Date().getTime());
     this.id = this.route.snapshot.params.id;
+    this.isEditable = false;
     this.todoService.readList(this.id).subscribe((list) => {
       this.isNew = !list;
       if (this.isNew) {
         this.todoService.updateList(this.id, this.list);
+        this.isEditable = true;
       }
       if (list) {
         this.isChanged = this.startedChanging ? this.startedChanging <= list.changed : false;
@@ -82,6 +89,23 @@ export class TodoComponent implements OnInit {
   }
 
   /**
+   * Delete todo
+   * @param index Index of an element
+   */
+  public deleteTodo(index: number): void {
+    this.list.todos = this.list.todos.filter((todo, i) => {
+      return this.list.todos.indexOf(todo) !== index;
+    });
+  }
+
+  /**
+   * Editable or disabled fields
+   */
+  public toggleEdit(): void {
+    this.isEditable = !this.isEditable;
+  }
+
+  /**
    * Reading value once
    */
   public readList(): void {
@@ -97,6 +121,7 @@ export class TodoComponent implements OnInit {
    * Saving Todo List
    */
   public save(): void {
+    this.isEditable = false;
     if (this.isChanged) {
       this.confirmSave();
     } else {

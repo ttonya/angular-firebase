@@ -2,19 +2,25 @@
     <div class="form">
         <div class="form__group">
             <label class="form__label">List Name</label>
-            <input class="form__input" [(ngModel)]="list.name" name="name"/>
+            <input class="form__input" [(ngModel)]="list.name" name="name" [disabled]="!isEditable" />
         </div>
         <div class="form__group">
             <div class="form__block">
                 <label class="form__label">List Todos</label>
-                <button class="button button--add" title="Add Todo" (click)="addTodo($event)">+</button>
+                <button class="button button--add" title="Add Todo" [ngClass]="{'button--disabled' : !isEditable }"
+                (click)="addTodo($event)" [disabled]="!isEditable">+</button>
             </div>
             <div *ngFor="let todo of list.todos; let i = index; trackBy:track" >
-                <input class="form__input" [(ngModel)]="list.todos[i]" type="text" name="todo-{{i}}"/>
+                <input class="form__input" [(ngModel)]="list.todos[i]" type="text" name="todo-{{i}}" [disabled]="!isEditable"/>
+                <button type="button" class="button button--delete" title="Delete Todo" [ngClass]="{'button--disabled' : !isEditable }"
+                (click)="deleteTodo(i)" [disabled]="!isEditable">-</button>
             </div>
         </div>
         <footer class="form__footer">
-            <button class="button button--save" type="submit">Save</button>
+            <button [ngClass]="{'button--disabled' : !isEditable }" class="button button--save" 
+            type="submit" [disabled]="!isEditable">Save</button>
+            <button class="button button--edit" 
+            type="button" (click)="toggleEdit()" >Edit</button>
         </footer>
     </div>
 </form>
