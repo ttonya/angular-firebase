@@ -43,6 +43,10 @@ export class TodoComponent implements OnInit {
    */
   public isChanged: boolean;
 
+  /**
+   * Is it new list
+   * or list already exists
+   */
   public isNew: boolean;
 
   constructor(
@@ -53,8 +57,11 @@ export class TodoComponent implements OnInit {
     this.list = new TodoList('New Todo List', ['todo 1', 'todo 2', 'todo 3'], new Date().getTime());
     this.id = this.route.snapshot.params.id;
     this.todoService.readList(this.id).subscribe((list) => {
+      this.isNew = !list;
+      if (this.isNew) {
+        this.todoService.updateList(this.id, this.list);
+      }
       if (list) {
-        this.isNew = !list;
         this.isChanged = this.startedChanging ? this.startedChanging <= list.changed : false;
       }
     });
