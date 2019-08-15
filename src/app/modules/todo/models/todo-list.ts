@@ -16,9 +16,9 @@ export class TodoList {
     /**
      * Time last changes were made
      */
-    public changed?: string;
+    public changed?: number;
 
-    constructor(name: string, todos: string[], changed?: string
+    constructor(name: string, todos: string[], changed?: number
       ) {
         this.name = name;
         this.todos = todos;

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
 import { Location } from '@angular/common';
 
 @Component({
@@ -11,18 +11,20 @@ export class MainComponent implements OnInit {
 
   constructor(
     private readonly router: Router,
-    private readonly route: ActivatedRoute,
     private readonly location: Location
   ) {
   }
 
-  ngOnInit() {
+  public ngOnInit(): void {
     if (this.location.path() === '/todo' || this.location.path() === '') {
       this.router.navigate(['/todo', this.generateId()]);
     }
   }
 
+  /**
+   * Generates Id for a new list
+   */
   public generateId(): string {
-    return Math.floor((Math.random() * 1000)).toString();
+    return Math.floor((Math.random() * 11111)).toString();
   }
 }

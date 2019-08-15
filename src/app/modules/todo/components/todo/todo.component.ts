@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { ConfirmationService } from 'primeng/api';
@@ -12,96 +12,112 @@ import { TodoList } from '../../models/todo-list';
   templateUrl: './todo.component.html',
   styleUrls: ['./todo.component.scss']
 })
+
+/**
+ * Todo List view and edit component
+ */
 export class TodoComponent implements OnInit {
+  /**
+   * List id
+   */
   @Input() public id: string;
 
-  public form: FormGroup;
   /**
-   * Todo Lists
+   * Form for editing and saving list
    */
-  public lists$: any;
+  public form: FormGroup;
 
   /**
    * Current Todo List
    */
   public list: TodoList;
 
-  public startedChanging: Date;
+  /**
+   * Timestamp for detecting whether a
+   * list has changed since uploading data
+   */
+  public startedChanging: number;
 
+  /**
+   * Check if a list has chnaged
+   */
   public isChanged: boolean;
 
   constructor(
     private readonly todoService: TodoService,
     private readonly route: ActivatedRoute,
-    public confirmationService: ConfirmationService,
-    private readonly cdr: ChangeDetectorRef
+    public confirmationService: ConfirmationService
     ) {
     this.id = this.route.snapshot.params.id;
-    this.list = new TodoList('New Todo List', ['todo 1', 'todo 2', 'todo 3'], String(new Date().getTime()));
+    this.todoService.readList(this.id).subscribe((list) => {
+      this.isChanged = this.startedChanging ? this.startedChanging <= list.changed : false;
+    });
+    this.list = new TodoList('New Todo List', ['todo 1', 'todo 2', 'todo 3'], new Date().getTime());
    }
 
-  ngOnInit() {
-    this.todoService.updateList(this.id, this.list);
-    this.getList();
+  public ngOnInit(): void {
+    this.readList();
   }
 
   /**
-   * Get all lists from the database
+   * Adds an additional blank todo field
+   * @param event Event
    */
-  public getLists(): void {
-   this.todoService.getAllLists().subscribe((lists) => {
-      this.lists$ = lists;
-    });
-  }
-
-  public getList() {
-    this.todoService.readList(this.id).subscribe((list) => {
-      if (list) {
-        this.isChanged = this.list.changed <= list.changed;
-        this.list = list;
-      }
-  });
-  }
-
   public addTodo(event: Event): void {
     event.preventDefault();
     this.list.todos.push('');
   }
 
-
-
-public save(): void {
-  if (this.isChanged) {
-    this.confirmSave();
-  } else {
-    this.list.changed = String(new Date().getTime());
-    this.todoService.updateList(this.id, this.list);
+  /**
+   * Reading value once
+   */
+  public readList(): void {
+    this.startedChanging = new Date().getTime();
+    this.todoService.getList(this.id).subscribe((list) => {
+      this.list = list;
+    });
   }
 
-}
-
-public confirmSave() {
-  this.confirmationService.confirm({
-      message: 'There were changes made to this list in another session. Whould you like to save it anyway?',
-      acceptLabel: 'Yes, overwrite previous changes',
-      rejectLabel: 'No, get the current value from the server',
-      accept: () => {
-        this.list.changed = String(new Date().getTime());
-        this.todoService.updateList(this.id, this.list);
-      },
-      reject: () => {
-        this.getList();
-      }
-  });
-}
-
-/**
- * Fixes focus loosing issue
- * whith ngModel Binding
- * @param index Index
- */
-  public track(index: number): number {
-    return index;
+  /**
+   * Saving Todo List
+   */
+  public save(): void {
+    if (this.isChanged) {
+      this.confirmSave();
+    } else {
+      this.list.changed = new Date().getTime();
+      this.todoService.updateList(this.id, this.list);
+      this.readList();
+    }
   }
+
+  /**
+   * Confirmation dialog settings
+   * Fires when a list is being changed in another session
+   */
+  public confirmSave() {
+    this.confirmationService.confirm({
+        message: 'There were changes made to this list in another session. Whould you like to save it anyway?',
+        acceptLabel: 'Yes, overwrite previous changes',
+        rejectLabel: 'No, get the current value from the server',
+        accept: () => {
+          this.list.changed = new Date().getTime();
+          this.todoService.updateList(this.id, this.list);
+          this.startedChanging = new Date().getTime();
+        },
+        reject: () => {
+          this.readList();
+        }
+    });
+  }
+
+  /**
+   * Fixes focus loosing issue
+   * whith ngModel Binding
+   * @param index Index
+   */
+    public track(index: number): number {
+      return index;
+    }
 
 }
